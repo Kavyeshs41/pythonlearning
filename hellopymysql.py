@@ -1,6 +1,9 @@
 import json
+from concurrent.futures import ThreadPoolExecutor
+
 import pymysql
 import requests
+from threading import Thread
 
 connection = pymysql.connect(host="localhost",
                              user="root",
@@ -32,7 +35,6 @@ URL = "http://689d2358.ngrok.io/api/demo"
 passed_data = []
 failed_data = []
 
-
 def generate_api_request(data):
     req_data ={
         "id": data["stone_id"],
@@ -46,12 +48,17 @@ def generate_api_request(data):
     }
     return req_data
 
+# print(values)
 
-print(values)
 
+executor = ThreadPoolExecutor(max_workers=1)
 
 for x in values:
+    print(executor.submit(generate_api_request(x)))
+    # t = Thread(target=generate_api_request,args=(x,))
+    # t.start()
     print(generate_api_request(x))
+
     # flag = requests.post(url=URL, data=json.dumps(generate_api_request(x)))
     # #print(flag)
     # # print(flag.json())
@@ -60,7 +67,7 @@ for x in values:
     # else:
     #     failed_data.append(x)
 
-print(failed_data)
+#print(failed_data)
 
 # response = requests.post(url=URL,data=json.dumps(values))
 #print(response.json())
